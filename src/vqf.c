@@ -17,7 +17,7 @@
 
 #define EPS FLT_EPSILON
 #define NaN NAN
-#define M_SQRT2     1.41421356237309504880   // sqrt(2)s
+#define M_SQRT2f     1.41421356237309504880f   // sqrt(2)s
 #define M_PIf       3.14159265358979323846f
 
 typedef struct vqf_params_s {
@@ -264,11 +264,11 @@ static void filterCoeffs(vqf_real_t tau, vqf_real_t Ts, vqf_double_t outB[], vqf
     // assert(tau > 0);
     // assert(Ts > 0);
     // second order Butterworth filter based on https://stackoverflow.com/a/52764064
-    vqf_double_t fc = (M_SQRT2 / (2.0*M_PIf))/(vqf_double_t)(tau); // time constant of dampened, non-oscillating part of step response
+    vqf_double_t fc = (M_SQRT2f / (2.0*M_PIf))/(vqf_double_t)(tau); // time constant of dampened, non-oscillating part of step response
     // tan_fast can be replaced by sin/cos from CMSIS_DSP lib
     vqf_double_t C = tan_fast(M_PIf*fc*(vqf_double_t)(Ts));
     // sqrt can be replaced by arm_sqrt_f32 from CMSIS_DSP
-    vqf_double_t D = C*C + M_SQRT2*C + 1;
+    vqf_double_t D = C*C + M_SQRT2f*C + 1;
     vqf_double_t b0 = C*C/D;
     outB[0] = b0;
     outB[1] = 2*b0;
@@ -276,7 +276,7 @@ static void filterCoeffs(vqf_real_t tau, vqf_real_t Ts, vqf_double_t outB[], vqf
     // a0 = 1.0
     outA[0] = 2*(C*C-1)/D; // a1
     // sqrt can be replaced by arm_sqrt_f32 from CMSIS_DSP
-    outA[1] = (1-M_SQRT2*C+C*C)/D; // a2
+    outA[1] = (1-M_SQRT2f*C+C*C)/D; // a2
 }
 
 static void filterInitialState(vqf_real_t x0, const vqf_double_t b[3], const vqf_double_t a[2], vqf_double_t out[])
@@ -1079,5 +1079,6 @@ void initVqf(vqf_real_t gyrTs, vqf_real_t accTs, vqf_real_t magTs)
     coeffs.accTs = accTs > 0 ? accTs : gyrTs;
     coeffs.magTs = magTs > 0 ? magTs : gyrTs;
 
+    init_params();
     setup();
 }
